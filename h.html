@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stock Value</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        #stockValue {
+            font-size: 36px;
+            font-weight: bold;
+            color: #333;
+            margin-top: 20px;
+        }
+
+        #refreshButton {
+            display: block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #refreshButton:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <input type="hidden" id="nsespotval" value="">
+    <p id="stockValue"></p>
+    <button id="refreshButton" onclick="getStockValue()">Refresh</button>
+
+    <script>
+        // Get the input field, paragraph element, and refresh button
+        const inputField = document.getElementById("nsespotval");
+        const stockValue = document.getElementById("stockValue");
+        const refreshButton = document.getElementById("refreshButton");
+
+        // Function to get the stock value
+        function getStockValue() {
+            // Make a request to the URL
+            fetch("https://www.moneycontrol.com/india/stockpricequote/banks-private-sector/hdfcbank/HDF01")
+                .then(response => response.text())
+                .then(data => {
+                    // Parse the HTML content
+                    const parser = new DOMParser();
+                    const htmlDoc = parser.parseFromString(data, "text/html");
+
+                    // Get the stock value from the parsed HTML
+                    const stockValueText = htmlDoc.querySelector("#nsespotval").value;
+
+                    // Display the stock value
+                    stockValue.textContent = "Stock Value: " + stockValueText;
+
+                    // Update the input field value
+                    inputField.value = stockValueText;
+                })
+                .catch(error => console.error(error));
+        }
+
+        // Call the function to get the initial stock value
+        getStockValue();
+
+        // Refresh the stock value every 5 seconds
+        setInterval(getStockValue, 5000);
+    </script>
+</body>
+</html>
